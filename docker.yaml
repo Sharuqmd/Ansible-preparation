@@ -1,0 +1,32 @@
+---
+- name: Install Docker and Run Docker Application
+  hosts: all
+  become: yes
+  tasks:
+    - name: Update apt repository
+      apt:
+        update_cache: yes
+
+    - name: Install Docker Engine
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Ensure Docker service is running
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Pull Docker image
+      docker_image:
+        name: sharuq/jenkins-project:latest
+        source: pull
+
+    - name: Run Docker container
+      docker_container:
+        name: myapp
+        image: sharuq/jenkins-project:latest
+        state: started
+        ports:
+          - "8080:8080"
