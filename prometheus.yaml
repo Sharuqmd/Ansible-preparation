@@ -1,0 +1,19 @@
+---
+- name: Deploying prometheus
+  hosts: any
+  become: yes
+  tasks: 
+    - name: adding helm repo
+      command: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+    - name: adding helm repo
+      command: helm repo add grafana https://grafana.github.io/helm-charts 
+    - name: adding helm repo
+      command: helm repo update
+    - name: adding prometheus repo 
+      command: helm install prometheus prometheus-community/prometheus
+    - name: adding grafana 
+      command: helm install grafana grafana/grafana
+    - name: setting service to node port 
+      command: kubectl expose service prometheus-server --type=NodePort --target-port=9090 --name=prometheus-server-ext
+    - name: setting service to node port 
+      command: kubectl expose service grafana --type=NodePort --target-port=3000 --name=grafana-ext
