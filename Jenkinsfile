@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/your-repo/your-playbook-repo.git'
+                git 'https://github.com/Sharuqmd/Ansible-preparation.git'
             }
         }
         stage('Copy Playbooks and Inventory to Ansible Server') {
