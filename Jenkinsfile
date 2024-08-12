@@ -14,14 +14,14 @@ pipeline {
         stage('Copy Playbook to Ansible Server') {
             steps {
                 sshagent([SSH_CREDENTIALS_ID]) {
-                    sh "scp -o StrictHostKeyChecking=no your-playbook.yml ${ANSIBLE_USER}@${ANSIBLE_SERVER_IP}:/path/to/destination/"
+                    sh "scp -o StrictHostKeyChecking=no prometheus.yaml ${ANSIBLE_USER}@${ANSIBLE_SERVER_IP}:/home/ubuntu"
                 }
             }
         }
         stage('Execute Playbook on Ansible Server') {
             steps {
                 sshagent([SSH_CREDENTIALS_ID]) {
-                    sh "ssh -o StrictHostKeyChecking=no ${ANSIBLE_USER}@${ANSIBLE_SERVER_IP} 'ansible-playbook /path/to/destination/your-playbook.yml'"
+                    sh "ssh -o StrictHostKeyChecking=no ${ANSIBLE_USER}@${ANSIBLE_SERVER_IP} 'ansible-playbook /home/ubuntu/prometheus.yaml'"
                 }
             }
         }
