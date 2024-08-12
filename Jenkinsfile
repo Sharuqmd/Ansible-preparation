@@ -1,9 +1,9 @@
 pipeline {
     agent any
     environment {
-        ANSIBLE_SERVER_IP = 'ansible-server-ip'
-        ANSIBLE_USER = 'jenkins' // Ensure this matches the SSH username configured in Jenkins
-        SSH_CREDENTIALS_ID = 'your-ssh-credentials-id'
+        ANSIBLE_SERVER_IP = '13.235.99.115'
+        ANSIBLE_USER = 'jenkins' 
+        SSH_CREDENTIALS_ID = 'jenkins'
     }
     stages {
         stage('Checkout') {
