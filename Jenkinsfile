@@ -3,7 +3,7 @@ pipeline {
     environment {
         ANSIBLE_SERVER_IP = '13.235.99.115'
         ANSIBLE_USER = 'jenkins' 
-        SSH_CREDENTIALS_ID = 'your-ssh-credentials-id'
+        SSH_CREDENTIALS_ID = 'jenkins'
     }
     stages {
         stage('Checkout') {
@@ -11,23 +11,23 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/Sharuqmd/Ansible-preparation.git'
             }
         }
-        stage('Prepare Directory') {
+        stage('Prepare Directory in Workspace') {
             steps {
-                // Create a directory on the Jenkins server to hold the files
-                sh 'mkdir -p /home/jenkins/ansible_playbooks'
+                // Create a directory inside the Jenkins workspace to store playbooks and inventory
+                sh 'mkdir -p ${WORKSPACE}/ansible_playbooks'
             }
         }
-        stage('Copy Playbooks and Inventory to Directory') {
+        stage('Copy Playbooks and Inventory to Workspace Directory') {
             steps {
-                // Copy the playbooks and inventory file to the created directory
-                sh 'cp prometheus.yaml inventory.yaml /home/jenkins/ansible_playbooks/'
+                // Copy the playbooks and inventory file to the created directory within the workspace
+                sh 'cp prometheus.yaml inventory.yaml ${WORKSPACE}/ansible_playbooks/'
             }
         }
         stage('Execute Playbook on Ansible Server') {
             steps {
                 sshagent([SSH_CREDENTIALS_ID]) {
-                    // Execute the playbook with the inventory file on the Jenkins server
-                    sh "ssh -o StrictHostKeyChecking=no ${ANSIBLE_USER}@${ANSIBLE_SERVER_IP} 'ansible-playbook -i /home/jenkins/ansible_playbooks/inventory.yaml /home/jenkins/ansible_playbooks/prometheus.yaml'"
+                    // Execute the playbook with the inventory file from the workspace
+                    sh "ssh -o StrictHostKeyChecking=no ${ANSIBLE_USER}@${ANSIBLE_SERVER_IP} 'ansible-playbook -i ${WORKSPACE}/ansible_playbooks/inventory.yaml ${WORKSPACE}/ansible_playbooks/prometheus.yaml'"
                 }
             }
         }
