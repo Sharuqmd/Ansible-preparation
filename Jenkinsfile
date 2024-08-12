@@ -26,8 +26,11 @@ pipeline {
         stage('Execute Playbook on Ansible Server') {
             steps {
                 sshagent([SSH_CREDENTIALS_ID]) {
-                    // Execute the playbook with the inventory file from the workspace
-                    sh "ssh -o StrictHostKeyChecking=no ${ANSIBLE_USER}@${ANSIBLE_SERVER_IP} 'ansible-playbook -i ${WORKSPACE}/ansible_playbooks/inventory.yaml ${WORKSPACE}/ansible_playbooks/prometheus.yaml'"
+                    // SSH into the Ansible server and execute the playbook using the copied files
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ${ANSIBLE_USER}@${ANSIBLE_SERVER_IP} \
+                        'ansible-playbook -i ${WORKSPACE}/ansible_playbooks/inventory.yaml ${WORKSPACE}/ansible_playbooks/prometheus.yaml'
+                    """
                 }
             }
         }
