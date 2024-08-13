@@ -1,6 +1,6 @@
 ---
 - name: Deploying prometheus
-  hosts: any
+  hosts: ec2
   become: yes
   tasks: 
     - name: adding helm repo
