@@ -23,6 +23,19 @@ pipeline {
                 sh 'cp prometheus.yaml inventory.yaml ${WORKSPACE}/ansible_playbooks/'
             }
         }
+        stage('Deploy Prod Application') {
+            steps {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: AWS_CREDENTIALS_ID]]) {
+                    script {
+                        sh '''
+                        aws eks update-kubeconfig --name eks-my-cluster-prod --region ap-south-1
+                        
+                        '''
+                        sleep 60 // Adding sleep to ensure the Kubernetes deployment is ready
+                    }
+                }
+            }
+        }
         stage('Execute Playbook on Ansible Server') {
             steps {
                 sshagent([SSH_CREDENTIALS_ID]) {
