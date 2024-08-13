@@ -5,45 +5,21 @@
   tasks:
     - name: Add Prometheus Helm repo
       command: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-      args:
-        warn: false
 
     - name: Add Grafana Helm repo
       command: helm repo add grafana https://grafana.github.io/helm-charts
-      args:
-        warn: false
 
     - name: Update Helm repos
       command: helm repo update
-      args:
-        warn: false
 
     - name: Install Prometheus
       command: helm install prometheus prometheus-community/prometheus
-      args:
-        warn: false
 
     - name: Install Grafana
       command: helm install grafana grafana/grafana
-      args:
-        warn: false
 
-    - name: Expose Prometheus service as NodePort
+    - name: Expose Prometheus service to NodePort
       command: kubectl expose service prometheus-server --type=NodePort --target-port=9090 --name=prometheus-server-ext
-      args:
-        warn: false
-      register: expose_prometheus
 
-    - name: Expose Grafana service as NodePort
+    - name: Expose Grafana service to NodePort
       command: kubectl expose service grafana --type=NodePort --target-port=3000 --name=grafana-ext
-      args:
-        warn: false
-      register: expose_grafana
-
-    - name: Debug Prometheus service exposure
-      debug:
-        msg: "{{ expose_prometheus.stdout }}"
-
-    - name: Debug Grafana service exposure
-      debug:
-        msg: "{{ expose_grafana.stdout }}"
