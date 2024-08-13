@@ -52,4 +52,11 @@ pipeline {
                 sshagent([SSH_CREDENTIALS_ID]) {
                     // SSH into the Ansible server using DNS name and execute the playbook using the copied files
                     sh """
-                        ssh -o StrictHostKeyChecking=no ${ANSIBLE_USER}@${A
+                        ssh -o StrictHostKeyChecking=no ${ANSIBLE_USER}@${ANSIBLE_SERVER_DNS} \
+                        'ansible-playbook -i ${WORKSPACE}/ansible_playbooks/inventory.yaml ${WORKSPACE}/ansible_playbooks/prometheus.yaml'
+                    """
+                }
+            }
+        }
+    }
+}
