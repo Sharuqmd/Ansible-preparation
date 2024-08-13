@@ -25,6 +25,14 @@ pipeline {
                 sh 'cp prometheus.yaml inventory.yaml ${WORKSPACE}/ansible_playbooks/'
             }
         }
+        stage('Debug') {
+            steps {
+                // Debugging: Verify files are present and paths are correct
+                sh 'ls -l ${WORKSPACE}/ansible_playbooks/'
+                sh 'cat ${WORKSPACE}/ansible_playbooks/inventory.yaml'
+                sh 'cat ${WORKSPACE}/ansible_playbooks/prometheus.yaml'
+            }
+        }
         stage('Deploy Prod Application') {
             steps {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: AWS_CREDENTIALS_ID]]) {
@@ -44,11 +52,4 @@ pipeline {
                 sshagent([SSH_CREDENTIALS_ID]) {
                     // SSH into the Ansible server using DNS name and execute the playbook using the copied files
                     sh """
-                        ssh -o StrictHostKeyChecking=no ${ANSIBLE_USER}@${ANSIBLE_SERVER_DNS} \
-                        'ansible-playbook -i ${WORKSPACE}/ansible_playbooks/inventory.yaml ${WORKSPACE}/ansible_playbooks/prometheus.yaml'
-                    """
-                }
-            }
-        }
-    }
-}
+                        ssh -o StrictHostKeyChecking=no ${ANSIBLE_USER}@${A
