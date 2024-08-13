@@ -24,9 +24,12 @@ pipeline {
         stage('Clone Repo and Run Playbook on Ansible Server') {
             steps {
                 sshagent([SSH_CREDENTIALS_ID]) {
-                    // SSH into the Ansible server, clone the repository, and run the playbook
+                    // SSH into the Ansible server, clean the directory if it exists, clone the repository, and run the playbook
                     sh """
                         ssh -o StrictHostKeyChecking=no ${ANSIBLE_USER}@${ANSIBLE_SERVER_DNS} '
+                        if [ -d /home/${ANSIBLE_USER}/ansible_playbooks ]; then
+                            rm -rf /home/${ANSIBLE_USER}/ansible_playbooks
+                        fi &&
                         git clone https://github.com/Sharuqmd/Ansible-preparation.git /home/${ANSIBLE_USER}/ansible_playbooks &&
                         cd /home/${ANSIBLE_USER}/ansible_playbooks &&
                         ansible-playbook -i inventory.yaml prometheus.yaml
