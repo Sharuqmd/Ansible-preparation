@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        ANSIBLE_SERVER_IP = '3.110.182.170'
+        ANSIBLE_SERVER_IP = '13.235.99.115'
         ANSIBLE_USER = 'jenkins' 
         SSH_CREDENTIALS_ID = 'jenkins'
     }
