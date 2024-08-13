@@ -23,3 +23,20 @@
 
     - name: Expose Grafana service to NodePort
       command: kubectl expose service grafana --type=NodePort --target-port=3000 --name=grafana-ext
+      
+    - name: Print Prometheus external endpoint
+      command: kubectl get service prometheus-server-ext -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'
+      register: prometheus_endpoint
+
+    - name: Print Grafana external endpoint
+      command: kubectl get service grafana-ext -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'
+      register: grafana_endpoint
+
+    - name: Display Prometheus external endpoint
+      debug:
+        msg: "Prometheus external endpoint: {{ prometheus_endpoint.stdout }}"
+
+    - name: Display Grafana external endpoint
+      debug:
+        msg: "Grafana external endpoint: {{ grafana_endpoint.stdout }}"
+
