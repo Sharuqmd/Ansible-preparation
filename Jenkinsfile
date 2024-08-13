@@ -1,10 +1,10 @@
 pipeline {
     agent any
     environment {
-        ANSIBLE_SERVER_DNS = 'ec2-13-235-99-115.ap-south-1.compute.amazonaws.com' // DNS of your Ansible server
-        ANSIBLE_USER = 'jenkins'             // User on the Ansible server
-        SSH_CREDENTIALS_ID = 'jenkins'       // Jenkins credentials ID for SSH access
-        AWS_CREDENTIALS_ID = 'aws-credentials' // Jenkins credentials ID for AWS access (replace with your actual ID)
+        ANSIBLE_SERVER_DNS = 'ec2-13-235-99-115.ap-south-1.compute.amazonaws.com' 
+        ANSIBLE_USER = 'jenkins'            
+        SSH_CREDENTIALS_ID = 'jenkins'      
+        AWS_CREDENTIALS_ID = 'aws' 
     }
     stages {
         stage('Checkout') {
