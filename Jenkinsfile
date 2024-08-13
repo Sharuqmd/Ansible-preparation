@@ -34,7 +34,7 @@ pipeline {
                         aws eks update-kubeconfig --name eks-my-cluster-prod --region ap-south-1
                         '''
                         // Optional: Add sleep to ensure Kubernetes deployment is ready (consider using a wait strategy instead)
-                        sleep 30
+                        sleep 10
                     }
                 }
             }
