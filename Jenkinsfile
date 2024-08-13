@@ -14,6 +14,8 @@ pipeline {
                         // Update kubeconfig to point to the correct EKS cluster
                         sh '''
                         aws eks update-kubeconfig --name eks-my-cluster-prod --region ap-south-1
+                        kubectl config current-context
+                        kubectl get nodes
                         '''
                         // Optional: Add sleep to ensure Kubernetes deployment is ready (consider using a wait strategy instead)
                         sleep 10
@@ -27,6 +29,7 @@ pipeline {
                     // SSH into the Ansible server, clean the directory if it exists, clone the repository, and run the playbook
                     sh """
                         ssh -o StrictHostKeyChecking=no ${ANSIBLE_USER}@${ANSIBLE_SERVER_DNS} '
+                        set -x  # Enable debugging for better visibility
                         if [ -d /home/${ANSIBLE_USER}/ansible_playbooks ]; then
                             rm -rf /home/${ANSIBLE_USER}/ansible_playbooks
                         fi &&
