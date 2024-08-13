@@ -1,38 +1,12 @@
 pipeline {
     agent any
     environment {
-        ANSIBLE_SERVER_DNS = 'ec2-13-235-99-115.ap-south-1.compute.amazonaws.com' 
-        ANSIBLE_USER = 'jenkins'            
-        SSH_CREDENTIALS_ID = 'jenkins'      
-        AWS_CREDENTIALS_ID = 'aws' 
+        ANSIBLE_SERVER_DNS = 'ec2-13-235-99-115.ap-south-1.compute.amazonaws.com'
+        ANSIBLE_USER = 'jenkins'
+        SSH_CREDENTIALS_ID = 'jenkins'
+        AWS_CREDENTIALS_ID = 'aws'
     }
     stages {
-        stage('Checkout') {
-            steps {
-                // Checkout code from the GitHub repository
-                git branch: 'main', url: 'https://github.com/Sharuqmd/Ansible-preparation.git'
-            }
-        }
-        stage('Prepare Directory in Workspace') {
-            steps {
-                // Create a directory inside the Jenkins workspace to store playbooks and inventory
-                sh 'mkdir -p ${WORKSPACE}/ansible_playbooks'
-            }
-        }
-        stage('Copy Playbooks and Inventory to Workspace Directory') {
-            steps {
-                // Copy the playbooks and inventory file to the created directory within the workspace
-                sh 'cp prometheus.yaml inventory.yaml ${WORKSPACE}/ansible_playbooks/'
-            }
-        }
-        stage('Debug') {
-            steps {
-                // Debugging: Verify files are present and paths are correct
-                sh 'ls -l ${WORKSPACE}/ansible_playbooks/'
-                sh 'cat ${WORKSPACE}/ansible_playbooks/inventory.yaml'
-                sh 'cat ${WORKSPACE}/ansible_playbooks/prometheus.yaml'
-            }
-        }
         stage('Deploy Prod Application') {
             steps {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: AWS_CREDENTIALS_ID]]) {
@@ -47,13 +21,16 @@ pipeline {
                 }
             }
         }
-        stage('Execute Playbook on Ansible Server') {
+        stage('Clone Repo and Run Playbook on Ansible Server') {
             steps {
                 sshagent([SSH_CREDENTIALS_ID]) {
-                    // SSH into the Ansible server using DNS name and execute the playbook using the copied files
+                    // SSH into the Ansible server, clone the repository, and run the playbook
                     sh """
-                        ssh -o StrictHostKeyChecking=no ${ANSIBLE_USER}@${ANSIBLE_SERVER_DNS} \
-                        'ansible-playbook -i ${WORKSPACE}/ansible_playbooks/inventory.yaml ${WORKSPACE}/ansible_playbooks/prometheus.yaml'
+                        ssh -o StrictHostKeyChecking=no ${ANSIBLE_USER}@${ANSIBLE_SERVER_DNS} '
+                        git clone https://github.com/Sharuqmd/Ansible-preparation.git /home/${ANSIBLE_USER}/ansible_playbooks &&
+                        cd /home/${ANSIBLE_USER}/ansible_playbooks &&
+                        ansible-playbook -i inventory.yaml prometheus.yaml
+                        '
                     """
                 }
             }
